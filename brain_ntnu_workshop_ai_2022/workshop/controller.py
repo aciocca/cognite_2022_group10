@@ -7,6 +7,7 @@ import pygame
 from djitellopy import BackgroundFrameRead, Tello
 from torchvision.models.detection import SSD
 
+import object_detection
 from brain_ntnu_workshop_ai_2022.workshop.object_detection import add_bounding_box_to_frame
 
 # Speed of the drone
@@ -57,7 +58,7 @@ class FrontEnd(object):
 
         # TODO (Task 3): Fill in your code ########################################################
         ##################################################################################
-        self.model: SSD = None
+        self.model: SSD = object_detection.get_ssdlite_model()
         ##################################################################################
 
         # Create update timer
