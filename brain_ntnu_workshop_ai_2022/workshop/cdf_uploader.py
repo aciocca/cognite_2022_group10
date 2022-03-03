@@ -38,7 +38,11 @@ def main() -> None:
     # TODO (Task 6): Fill in your code ########################################################
     ##################################################################################
     # List all the image files in the data folder similar to this ["data/img1.png", "data/img2.png",...]
-    files: List[str] = "<YOUR CODE HERE>"
+    files: List[str] =  []
+    for pngimage in os.listdir("./data"):
+        if pngimage.endswith(".png"):
+            files.append("data/" + pngimage)
+    
     ##################################################################################
 
     # For each file add a FileMetadata object to the upload queue

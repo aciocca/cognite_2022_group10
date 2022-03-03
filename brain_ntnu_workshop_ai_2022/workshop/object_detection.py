@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, List, Tuple, Union
-
+import os
 import cv2
 import numpy as np
 import torch
@@ -83,7 +83,7 @@ def predict(model: Union[FasterRCNN, SSD], x: List[np.ndarray]) -> List[Dict[str
     with torch.no_grad():
         # TODO (Task 3): Fill in your code ########################################################
         ##################################################################################
-        predictions: List[Dict[str, torch.Tensor]] = "YOUR CODE HERE"
+        predictions: List[Dict[str, torch.Tensor]] = model(x_tensor)
         ##################################################################################
         predictions_np = [{key: value.numpy() for key, value in prediction.items()} for prediction in predictions]
 
@@ -101,9 +101,14 @@ def main() -> None:
     # TODO (Task 5): Fill in your code ########################################################
     ##################################################################################
     # Make predictions on files stored in the data folder
-
+    
     # 1. List the files in the data folder
-    files: List[str] = "YOUR CODE HERE"
+    files: List[str] = []
+
+    for pngimage in os.listdir("./data"):
+        if pngimage.endswith(".png"):
+            files.append("./data/" + pngimage)
+    print(files)
 
     # 2. Read files as numpy arrays
     images: List[np.ndarray] = [np.array(Image.open(file).convert("RGB")) for file in files]
@@ -112,13 +117,16 @@ def main() -> None:
     images = [np.moveaxis(image, -1, 0) for image in images]
 
     # 4. Load model
-    model = "YOUR CODE HERE"
-
+    model = get_fasterrcnn_model()
+    model.eval()
     # 5. Make predictions
-    result: List[Dict[str, np.ndarray]] = "YOUR CODE HERE"
+    result: List[Dict[str, np.ndarray]] = []
+    x_tensor: List[torch.Tensor] = [torch.from_numpy(img).to(torch.float) for img in images]
+    result.append(model(x_tensor))
 
     # 6. Print results
     logger.info("Listing predictions")
+    print(result)
     ##################################################################################
 
 

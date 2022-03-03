@@ -6,7 +6,7 @@ import numpy as np
 import pygame
 from djitellopy import BackgroundFrameRead, Tello
 from torchvision.models.detection import SSD
-
+from PIL import Image as im
 import object_detection
 from brain_ntnu_workshop_ai_2022.workshop.object_detection import add_bounding_box_to_frame
 
@@ -15,7 +15,7 @@ SPEED = 60
 
 # Frames per second of the pygame window display
 # A low number also results in input lag, as input information is processed once per frame.
-FPS = 120
+FPS = 60
 
 # Threshold for the scores from the object detection model
 THRESHOLD = 0.9
@@ -114,7 +114,7 @@ class FrontEnd(object):
             # TODO(Task 3): Fill in your code ########################################################
             ##################################################################################
             # Remove the comment to run the prediction on each frame.
-            # self.predict_frame()
+            self.predict_frame()
             ##################################################################################
 
             self.frame = self.flip_frame(self.frame)
@@ -129,12 +129,11 @@ class FrontEnd(object):
         self.tello.end()
 
     def predict_frame(self) -> None:
-        frame_reshaped = np.moveaxis(self.frame, -1, 0)  # This reshapes the frame to fit for the torchvision models
-
+        frame_reshaped = [np.moveaxis(self.frame, -1, 0)]  # This reshapes the frame to fit for the torchvision models
         # TODO(Task 3): Fill in your code ########################################################
         ##################################################################################
         # Make predictions using predict method from workshop/object_detection.py
-        predictions: List[Dict[str, np.ndarray]] = "YOUR CODE HERE"
+        predictions: List[Dict[str, np.ndarray]] = object_detection.predict(self.model, frame_reshaped)
         ##################################################################################
 
         # Visualize the bounding boxes if score is bigger than a threshold
@@ -194,9 +193,16 @@ class FrontEnd(object):
         elif key == pygame.K_l:  # land
             self.tello.land()
             self.send_rc_control = False
+        elif key == pygame.K_LEFT or key == pygame.K_RIGHT:  # set zero left/right velocity
+            self.left_right_velocity = 0
+        
         # TODO (Task 4): Fill in your code ########################################################
         ##################################################################################
         # Save frame to file when SPACE is pressed
+        elif key == pygame.K_SPACE:
+            data = im.fromarray(self.flip_frame(self.frame))
+            data.save("./data/test.png")
+
         ##################################################################################
 
     def update(self) -> None:

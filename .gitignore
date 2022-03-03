@@ -128,3 +128,8 @@ dmypy.json
 .pyre/
 .idea
 .DS_Store
+test copy.jpg
+test.jpg
+.gitignore
+data/test copy.png
+data/test.png
